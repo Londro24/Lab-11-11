@@ -290,7 +290,9 @@ fn listar_nombre(path: &Path) {
 fn editar_medicamento(path: &Path) {
     let mut codigo: String = String::new();
     let text:String = open_file(path);
-    let mut existen: bool = false;
+    let mut cambiado: bool = false;
+    let mut file: File = open_file_to_write(path);
+    let mut cadena: String = String::new();
     //
     println!("Escriba el CÓDIGO del medicamento:");
     stdin().read_line(&mut codigo).unwrap();
@@ -298,17 +300,27 @@ fn editar_medicamento(path: &Path) {
     //
     for linea in text.split("\n") {
         let med = crear_structure_med(linea);
-        if med.codigo == codigo.trim().to_uppercase() {
-            existen = true;
+        if med.codigo == codigo.trim().to_uppercase() && !cambiado{
+            println!("El siguente medicamento fue cambiado");
             imprimir_medicamento(med);
+            cambiado = true;
+            // todo: Se supone que aqui hay que hacer 2 cosas.
+            //? 1.- hacer un menu para que elija y ponga que va a cambiar
+            //? 2.- funcino para cambiar o un if o match
+        }
+        if linea.trim() != "" {
+            cadena = cadena  + linea + "                  \n";
         }
     }
     //
-    if !existen {
+    //print!("{}", cadena);
+    if !cambiado {
         println!("Medicamento no encontrado\n")
+    } else {
+        //println!("{}", cadena);
+        file.write_all(cadena.as_bytes()).unwrap();
     }
 }
-
 
 fn eliminar_medicamento(path: &Path) {
     let mut codigo: String = String::new();
@@ -334,9 +346,7 @@ fn eliminar_medicamento(path: &Path) {
         }
     }
     //
-    print!("{}", cadena);
-    print!("asjfhjashfjkas");
-
+    //print!("{}", cadena);
     if !eliminado {
         println!("Medicamento no encontrado\n")
     } else {
