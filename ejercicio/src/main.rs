@@ -64,7 +64,7 @@ fn open_file_to_write(path: &Path) -> File{
     };
     return file
 }
-
+// Abre el archivo en modo escribir
 
 fn open_file(path: &Path) -> String{
     let mut text = "".to_string();
@@ -298,18 +298,18 @@ fn editar_medicamento(path: &Path) {
     stdin().read_line(&mut codigo).unwrap();
     println!("");
     //
+    let linea_medicamento = pedir_medicamento();
+    
     for linea in text.split("\n") {
         let med = crear_structure_med(linea);
-        if med.codigo == codigo.trim().to_uppercase() && !cambiado{
-            println!("El siguente medicamento fue cambiado");
-            imprimir_medicamento(med);
+        
+        if med.codigo == codigo.trim().to_uppercase(){
             cambiado = true;
-            // todo: Se supone que aqui hay que hacer 2 cosas.
-            //? 1.- hacer un menu para que elija y ponga que va a cambiar
-            //? 2.- funcino para cambiar o un if o match
-        }
-        if linea.trim() != "" {
-            cadena = cadena  + linea + "                  \n";
+            if linea.trim() != ""{
+                cadena = cadena + &linea_medicamento + "\n" ;
+            }
+        } else if linea.trim() != "" {
+            cadena = cadena  + linea + "\n";
         }
     }
     //
@@ -317,10 +317,12 @@ fn editar_medicamento(path: &Path) {
     if !cambiado {
         println!("Medicamento no encontrado\n")
     } else {
+        println!("El medicamento fue cambiado");
         //println!("{}", cadena);
         file.write_all(cadena.as_bytes()).unwrap();
     }
 }
+// Busca por codigo y cambia sus datos
 
 fn eliminar_medicamento(path: &Path) {
     let mut codigo: String = String::new();
@@ -342,7 +344,7 @@ fn eliminar_medicamento(path: &Path) {
             continue; 
         }
         if linea.trim() != "" {
-            cadena = cadena  + linea + "                  \n";
+            cadena = cadena  + linea + "\n";
         }
     }
     //
@@ -354,7 +356,7 @@ fn eliminar_medicamento(path: &Path) {
         file.write_all(cadena.as_bytes()).unwrap();
     }
 }
-
+// Elimina un medicamento segun su codigo
 
 fn main() {
     let path: &Path = Path::new("base_de_datos.txt");
